@@ -5,38 +5,86 @@
 
 //creates structure for array list
 struct myArray {
-    char element;
+    //pointer for array
+    char *pointer;
+    //capacity
+    int cap;
+    //lenth of elements in array
     int length;
+    //elements of array
+    char *element;
 
 } ;
 
-struct myArray array_list_new(char *input){
-    struct myArray *arr1;
-    int size = 20;
-    arr1 = (struct myArray *)malloc(size * sizeof(struct myArray));
-    //checks if memory has been sucessfully allocated
-    if (arr1 == NULL){
-        printf("Memory not allocated");
+struct myArray *array_list_new(char *input){
+    struct myArray *arr;
+    int i;
+    int capacity = 10;
+    //allocate struct myArray
+    arr = (struct myArray *)malloc(15 *sizeof(struct myArray));
+    //check if memory allocation was successful
+    if (arr== NULL){
+        printf("Memory not allocated.\n");
         exit(0);
     }
-    int i;
-    //assign each char of input to the structure
-    for (i = 0; i < size; i++){
-        arr1[i]->element = input[i];
-        //assign length of that element i + 1
-        arr1->length[i] = i + 1;
+    else{
+        //assign cap to structure depending on length of input
+        arr->cap = strlen(input);
+        //allocate the array within struct arr
+        arr->element = (char *)malloc(arr->cap * sizeof(char));
+        if (arr->element == NULL){
+        printf("Memory not allocated.\n");
+        exit(0);
+        }
+        else{
+            //assign pointer to first element of arr
+            arr->pointer = &arr->element[0];
+            
+            for (i = 0; i < arr->cap; i++){
+                //store input[i] into arr.element[i]
+                arr->element[i] = input[i];
+                //increase length by 1
+                arr->length = i + 1;
+
+        }
+
+
+        }
+        return arr;
+
     }
-    return *arr1;
-}
 
+}
 void array_list_add_to_end(struct myArray *arr1, char *string){
-
-    
+    //if adding new string to structure exceeds cap, reallocate
+    if (arr1->cap <= arr1->length + strlen(string))
+    {
+        arr1->cap = arr1->length + strlen(string);
+        arr1->element = (char *)realloc(arr1->element, arr1->cap * sizeof(char));
+    }
+    int i;
+    int j = 0;
+    for (i = arr1->length + 1; i <= arr1->cap; i++)
+    {
+        arr1->element[i] = string[j];
+        j++;
+    }
+    arr1->length = arr1->length + strlen(string);
 }
-
 int main(){
+    int i;
     char word[] = "Hello";
-    struct myArray arr2 = array_list_new(word);
+    struct myArray *arr= array_list_new(word);
+    for (i = 0; i < strlen(word); i++){
+        printf("%c", arr->element[i]);
+    }
+    printf("\n");
+    char add[] = "World";
+    array_list_add_to_end(arr, add);
+    for (i = 0; i <= strlen(word) + strlen(add); i++){
+        printf("%c", arr->element[i]);
+    }
+    free(arr);
     return 0;
 }
 
